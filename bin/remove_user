@@ -1,0 +1,10 @@
+#!/bin/sh
+
+[ -z "$1" ] && echo "Usage: remove_user <name>" && exit 1
+
+userdel $1
+rm -rf /data/$1
+
+service nginx reload
+
+echo "All done check it out."

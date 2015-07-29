@@ -1,0 +1,14 @@
+server {
+        server_name     $2 www.$2;
+        root            /data/$1/$2/public;
+
+        include /JBX-Server/lib/blockbots;
+        include /JBX-Server/lib/static;
+        include /JBX-Server/lib/drop;
+        include /JBX-Server/lib/home;
+
+        location ~ \.php$ {
+                fastcgi_pass   127.0.0.1:$3;
+                include /JBX-Server/lib/php_params;
+        }
+}

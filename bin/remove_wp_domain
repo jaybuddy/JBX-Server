@@ -1,0 +1,17 @@
+[ -z "$2" ] && echo "Usage: remove_wp_domain <account> <domain>" && exit 1
+
+rm -rf /data/$1/$2
+
+rm /etc/nginx/conf.d/$2.conf
+
+rm /etc/php5/fpm/pool.d/$2.conf
+
+mysql --host=localhost --user=root --password=Danny35! <<EOFMYSQL
+DROP DATABASE $1;
+EOFMYSQL
+[ $? -eq 0 ] && echo "Database deleted!" || echo "Failed to delete database!"
+
+service nginx reload
+service php5-fpm restart
+
+echo "Domain $2 on account $1 removed";

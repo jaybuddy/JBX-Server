@@ -1,0 +1,22 @@
+#!/bin/sh
+
+[ -z "$2" ] && echo "Usage: add_user <name> <password>" && exit 1
+
+egrep "^$1" /etc/passwd > /dev/null
+if [ $? -eq 0 ]; then
+
+echo "$1 user already exists!"
+exit 1
+
+else
+
+groupadd $1
+
+useradd -g $1 -s /bin/ftponly -p $2 -d /data/$1 -m $1
+chmod a-w /data/$1
+
+service nginx reload
+
+echo "All done check it out."
+
+fi

@@ -1,0 +1,51 @@
+[ -z "$4" ] && echo "Usage: add_domain <account> <domain> <port> <password>" && exit 1
+
+
+mkdir -p /data/$1/$2/{public,private,log,backup}
+svn co http://core.svn.wordpress.org/tags/4.1 /data/$1/$2/public
+
+chown -R $1:$1 /data/$1/$2/public
+ln -s /JBX-Server/lib/mu-plugins /data/$1/$2/public/wp-content/mu-plugins
+
+cat > "/etc/nginx/conf.d/$2.conf" <<END
+server {
+        server_name     $2 www.$2;
+        root            /data/$1/$2/public;
+
+        include /JBX-Server/lib/blockbots;
+        include /JBX-Server/lib/static;
+        include /JBX-Server/lib/drop;
+        include /JBX-Server/lib/home;
+
+        location ~ \.php$ {
+                fastcgi_pass   127.0.0.1:$3;
+                include /JBX-Server/lib/php_params;
+        }
+}
+END
+
+cat > "/etc/php5/fpm/pool.d/$2.conf" <<END
+[$2]
+user = $1
+group = $1
+listen = 127.0.0.1:$3
+listen.allowed_clients = 127.0.0.1
+pm = ondemand
+pm.max_children = 50
+pm.process_idle_timeout = 10s
+pm.status_path = /status
+chdir = /
+
+END
+
+mysql --host=localhost --user=root --password=AMuLe5rjGW <<EOFMYSQL
+CREATE DATABASE $1;
+GRANT ALL ON $1.* TO "$1"@'localhost' IDENTIFIED BY "$4";
+FLUSH PRIVILEGES;
+EOFMYSQL
+[ $? -eq 0 ] && echo "Database created and user added!" || echo "Failed to create database!"
+
+service nginx reload
+service php5-fpm restart
+
+echo "Hosting set up for $2 under account $1";

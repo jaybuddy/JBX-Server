@@ -1,0 +1,3 @@
+if ( $http_user_agent ~* (nbot|MJ12bot|CrystalSemanticsBot|Wotbox|Baiduspider-image|proximic|BoardReader|Exabot|SolomonoBot|YoudaoBot|Swiftbot|Moreover|Owlinbot|Sogou|Sosospider|YandexBot|Exabot|Spinn3r|URLAppendBot|BlogScope|BLEXBot|AhrefsBot|Baiduspider|MJ12bot|Ezooms) ) {
+	return 403;
+}
