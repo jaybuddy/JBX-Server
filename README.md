@@ -1,5 +1,5 @@
 # JBX-Server
-Source files for new servers
+This repo contains source files for running shared hosting on a LEMP stack. The code is 4 years old so there is a good chance it needs updating to meet best practices. I do not use this code anymore. 
 
 
 ## Instructions
